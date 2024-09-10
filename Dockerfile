@@ -54,6 +54,7 @@ ENV \
   VPLGPURT=24.2.5 \
   VPX=1.14.1 \
   VULKANSDK=vulkan-sdk-1.3.290.0 \
+  VVENC=1.12.0 \
   WEBP=1.4.0 \
   X265=3.6 \
   XVID=1.3.7 \
@@ -772,6 +773,25 @@ RUN \
   make && \
   make install
 RUN \
+  echo "**** grabbing vvenc ****" && \
+  mkdir -p /tmp/vvenc && \
+  curl -Lf \
+    https://github.com/fraunhoferhhi/vvenc/archive/v${VVENC}.tar.gz | \
+    tar -zx --strip-components=1 -C /tmp/vvenc
+RUN \
+  echo "**** compiling vvenc ****" && \
+  cd /tmp/vvenc && \
+  rm -rf \
+    CMakeCache.txt \
+    CMakeFiles && \
+  mkdir -p \
+    vvenc_build && \
+  cd vvenc_build && \
+  cmake \
+    -DBUILD_STATIC_LIBS=0 .. && \
+  make && \
+  make install
+RUN \
   echo "**** grabbing webp ****" && \
   mkdir -p /tmp/webp && \
   curl -Lf \
@@ -893,6 +913,7 @@ RUN \
     --enable-libvorbis \
     --enable-libvpl \
     --enable-libvpx \
+    --enable-libvvenc \
     --enable-libwebp \
     --enable-libx264 \
     --enable-libx265 \
